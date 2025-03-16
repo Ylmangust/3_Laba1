@@ -18,7 +18,7 @@
         </dependency> 
     </dependencies>
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.build.sourceEncoding>windows-1251</project.build.sourceEncoding>
         <maven.compiler.source>22</maven.compiler.source>
         <maven.compiler.target>22</maven.compiler.target>
         <exec.mainClass>mephi.b22901.lab1.Lab1</exec.mainClass>
