@@ -7,6 +7,7 @@ package mephi.b22901.lab1.View;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import mephi.b22901.lab1.Controller.Controller;
 
 /**
@@ -16,44 +17,38 @@ import mephi.b22901.lab1.Controller.Controller;
 public class GUI {
 
     private Controller controller;
-    private JFrame frame;
-    private JButton importButton;
-    private JButton processButton;
-    private JButton exportButton;
-    private JButton exitButton;
+
+    ;
 
     public GUI(Controller controller) {
         this.controller = controller;
-        frame = new JFrame("XLSX Data Tool");
+        JFrame frame = new JFrame("XLSX Data Tool");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(450, 300);
         frame.setLayout(new BorderLayout());
 
-        importButton = new JButton("Import xlsx file");
-        importButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                controller.read();
-            }
-        });
-
-        processButton = new JButton("Start process");
+        JButton processButton = new JButton("Import file and start process");
         processButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                String path = getPathForReading();
+                if (path != null) {
+                    controller.read(path);
+                    controller.process();
+                }
             }
         });
 
-        exportButton = new JButton("Export xlsx file");
+        JButton exportButton = new JButton("Export xlsx file");
         exportButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                String path = getPathForExport();
+                controller.export(path);
             }
         });
 
-        exitButton = new JButton("Exit");
+        JButton exitButton = new JButton("Exit");
         exitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -63,7 +58,6 @@ public class GUI {
 
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(4, 1));
-        panel.add(importButton);
         panel.add(processButton);
         panel.add(exportButton);
         panel.add(exitButton);
@@ -73,4 +67,38 @@ public class GUI {
         frame.setVisible(true);
         frame.setLocationRelativeTo(null);
     }
+
+    public String getPathForReading() {
+        JFileChooser fileChooser = new JFileChooser();
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Excel file(*.xlsx)", "xlsx");
+        fileChooser.setFileFilter(filter);
+        String path = null;
+        int ret = fileChooser.showOpenDialog(null);
+        if (ret == JFileChooser.APPROVE_OPTION) {
+            path = fileChooser.getSelectedFile().getAbsolutePath();
+        } else if (ret == JFileChooser.CANCEL_OPTION) {
+            return null;
+        }
+        return path;
+    }
+
+    public int giveAnswer(Integer[] num) {
+        int selected = JOptionPane.showOptionDialog(null, "Choose a sheet number", "Dailog window", 0, 3, null, num, controller);
+        return selected;
+    }
+
+    public String getPathForExport() {
+        JFileChooser fileChooser = new JFileChooser();
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Excel file(*.xlsx)", "xlsx");
+        fileChooser.setFileFilter(filter);
+        String path = null;
+        int ret = fileChooser.showSaveDialog(null);
+        if (ret == JFileChooser.APPROVE_OPTION) {
+            path = fileChooser.getSelectedFile().getAbsolutePath();
+        }else if (ret == JFileChooser.CANCEL_OPTION) {
+            return null;
+        }
+        return path;
+    }
+
 }

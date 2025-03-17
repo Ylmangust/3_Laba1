@@ -4,8 +4,10 @@
  */
 package mephi.b22901.lab1.Controller;
 
+import mephi.b22901.lab1.Model.ExportClass;
 import mephi.b22901.lab1.View.GUI;
-import mephi.b22901.lab1.Model.importData;
+import mephi.b22901.lab1.Model.ImportClass;
+import mephi.b22901.lab1.Model.ProcessClass;
 
 /**
  *
@@ -13,12 +15,36 @@ import mephi.b22901.lab1.Model.importData;
  */
 public class Controller {
 
+    private ImportClass importedData;
+    private ProcessClass process;
+    private ExportClass exportInfo;
+    private GUI gui;
+
     public Controller() {
-        GUI gui = new GUI(this);
+        gui = new GUI(this);
     }
 
-    public void read() {
-        importData imData = new importData();
+    public void read(String path) {
+        importedData = new ImportClass(this);
+        importedData.ChecknRead(path);
+    }
+
+    public void process() {
+        if (!importedData.getData().isEmpty()) {
+            System.out.println("data is not empty");
+            process = new ProcessClass(importedData.getData());
+        }
+    }
+
+    public int getSheet(Integer[] num) {
+        return gui.giveAnswer(num);
+    }
+
+    public void export(String path) {
+        exportInfo = new ExportClass(this);
+        if (!process.returnData().isEmpty()) {
+            exportInfo.exportData(path, process.returnData());
+        }
     }
 
 }
