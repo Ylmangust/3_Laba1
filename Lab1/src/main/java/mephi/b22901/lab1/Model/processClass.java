@@ -4,12 +4,12 @@
  */
 package mephi.b22901.lab1.Model;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import org.apache.commons.math3.distribution.TDistribution;
 import org.apache.commons.math3.stat.descriptive.*;
 import org.apache.commons.math3.stat.correlation.*;
 import org.apache.commons.math3.stat.descriptive.moment.GeometricMean;
-import org.apache.commons.math3.stat.descriptive.rank.*;
 
 /**
  *
@@ -46,7 +46,7 @@ public class ProcessClass {
             DescriptiveStatistics stats = new DescriptiveStatistics();
             double[] temp = new double[rows];
             for (int i = 0; i < rows; i++) {
-                temp[i] = Math.abs(data.get(i).get(j));
+                temp[i] = data.get(i).get(j);
                 stats.addValue(data.get(i).get(j));
             }
 
@@ -58,27 +58,36 @@ public class ProcessClass {
             var[j] = stats.getVariance();
             max[j] = stats.getMax();
             min[j] = stats.getMin();
-            varCoef[j] = stDeav[j] / aMean[j] * 100;
+            varCoef[j] = stDeav[j] / Math.abs(aMean[j]) * 100;
+
+            double confLvl = 0.95;
+            double alpha = 1 - confLvl;
+            TDistribution tDistribution = new TDistribution(elNumber[j] - 1);
+            double tValue = tDistribution.inverseCumulativeProbability(1 - alpha / 2);
+
+            double marginOfError = tValue * (stDeav[j] / Math.sqrt(elNumber[j]));
+            confInterval[j][0] = aMean[j] - marginOfError;
+            confInterval[j][1] = aMean[j] + marginOfError;
         }
 
-        for (int i = 0; i < columns; i++) {
-            System.out.println(gMean[i]);
-        }
     }
 
-    public List<double[]> returnData() {
-        List<double[]> data = new ArrayList<>();
-        data.add(gMean);
-        data.add(aMean);
-        data.add(stDeav);
-        data.add(range);
-        data.add(elNumber);
-        data.add(var);
-        data.add(max);
-        data.add(min);
-        data.add(varCoef);
+    public HashMap<String, double[]> returnData() {
+        HashMap<String, double[]> data = new HashMap<>();
+        data.put("Ср.геом.", gMean);
+        data.put("Ср.арифм.", aMean);
+        data.put("Ст.откл-е", stDeav);
+        data.put("Размах", range);
+        data.put("Кол-во эл-в", elNumber);
+        data.put("Дисперсия", var);
+        data.put("Маx", max);
+        data.put("Min", min);
+        data.put("Коэф.вар.", varCoef);
         return data;
-
+    }
+    
+    public double[][] returnConfInterval(){
+        return confInterval;
     }
 
 }

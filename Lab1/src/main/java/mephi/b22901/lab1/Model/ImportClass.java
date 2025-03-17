@@ -30,11 +30,6 @@ public class ImportClass {
         if (isExcel(path)) {
             data = readFile(path);
             int num = 1;
-            for (List<Double> row : data) {
-                System.out.println(num);
-                System.out.println(row);
-                num++;
-            }
             JOptionPane.showMessageDialog(null, "File has been read successfully", "OK", JOptionPane.INFORMATION_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(null, "File format can be only xlsx!", "OK", JOptionPane.WARNING_MESSAGE);
@@ -63,20 +58,26 @@ public class ImportClass {
             for (int i = 0; i < sheets; i++) {
                 sheetsAvaliable[i] = i + 1;
             }
-            int answer = controller.getSheet(sheetsAvaliable)-1;
+            int answer = controller.getSheet(sheetsAvaliable);
             Sheet sheet = workbook.getSheetAt(answer);
 
             int rows = sheet.getRow(0).getLastCellNum();
             for (Row row : sheet) {
                 List<Double> tempData = new ArrayList<>();
                 for (Cell cell : row) {
+                    if (cell.getCellType() == CellType.FORMULA) {
+                        FormulaEvaluator formula = workbook.getCreationHelper().createFormulaEvaluator();
+                        CellValue cellVal = formula.evaluate(cell);
+                        if (cellVal.getCellType() == CellType.NUMERIC) {
+                            tempData.add(cellVal.getNumberValue());
+                        }
+                    }
                     if (cell.getCellType() == CellType.NUMERIC) {
                         tempData.add(cell.getNumericCellValue());
                     }
                 }
                 if (tempData.size() == rows) {
                     writtenFile.add(tempData);
-                    System.out.println(writtenFile.getLast());
                 }
             }
         } catch (FileNotFoundException e) {

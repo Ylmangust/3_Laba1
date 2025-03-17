@@ -28,6 +28,7 @@ public class GUI {
         frame.setLayout(new BorderLayout());
 
         JButton processButton = new JButton("Import file and start process");
+        processButton.setFont(new Font("Lato", Font.BOLD, 15));
         processButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -40,15 +41,19 @@ public class GUI {
         });
 
         JButton exportButton = new JButton("Export xlsx file");
+        exportButton.setFont(new Font("Lato", Font.BOLD, 15));
         exportButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String path = getPathForExport();
-                controller.export(path);
+                if (path != null) {
+                    controller.export(path);
+                }
             }
         });
 
         JButton exitButton = new JButton("Exit");
+        exitButton.setFont(new Font("Lato", Font.BOLD, 15));
         exitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -57,7 +62,7 @@ public class GUI {
         });
 
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(4, 1));
+        panel.setLayout(new GridLayout(3, 1));
         panel.add(processButton);
         panel.add(exportButton);
         panel.add(exitButton);
@@ -83,7 +88,7 @@ public class GUI {
     }
 
     public int giveAnswer(Integer[] num) {
-        int selected = JOptionPane.showOptionDialog(null, "Choose a sheet number", "Dailog window", 0, 3, null, num, controller);
+        int selected = JOptionPane.showOptionDialog(null, "Choose a sheet number", "Dailog window", 0, JOptionPane.QUESTION_MESSAGE, null, num, null);
         return selected;
     }
 
@@ -95,7 +100,7 @@ public class GUI {
         int ret = fileChooser.showSaveDialog(null);
         if (ret == JFileChooser.APPROVE_OPTION) {
             path = fileChooser.getSelectedFile().getAbsolutePath();
-        }else if (ret == JFileChooser.CANCEL_OPTION) {
+        } else if (ret == JFileChooser.CANCEL_OPTION) {
             return null;
         }
         return path;

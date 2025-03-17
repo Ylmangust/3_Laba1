@@ -31,7 +31,6 @@ public class Controller {
 
     public void process() {
         if (!importedData.getData().isEmpty()) {
-            System.out.println("data is not empty");
             process = new ProcessClass(importedData.getData());
         }
     }
@@ -43,7 +42,7 @@ public class Controller {
     public void export(String path) {
         exportInfo = new ExportClass(this);
         if (!process.returnData().isEmpty()) {
-            exportInfo.exportData(path, process.returnData());
+            exportInfo.exportData(path, process.returnData(), process.returnConfInterval());
         }
     }
 
