@@ -30,7 +30,7 @@ public class Controller {
     }
 
     public void process() {
-        if (!importedData.getData().isEmpty()) {
+        if (importedData.getData()!=null) {
             process = new ProcessClass(importedData.getData());
         }
     }

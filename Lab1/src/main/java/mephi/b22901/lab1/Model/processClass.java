@@ -7,6 +7,8 @@ package mephi.b22901.lab1.Model;
 import java.util.HashMap;
 import java.util.List;
 import org.apache.commons.math3.distribution.TDistribution;
+import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.stat.descriptive.*;
 import org.apache.commons.math3.stat.correlation.*;
 import org.apache.commons.math3.stat.descriptive.moment.GeometricMean;
@@ -41,12 +43,15 @@ public class ProcessClass {
         max = new double[columns];
         min = new double[columns];
         varCoef = new double[columns];
-
+        
+        double[][] matrix = new double[rows][columns];
+        
         for (int j = 0; j < columns; j++) {
             DescriptiveStatistics stats = new DescriptiveStatistics();
             double[] temp = new double[rows];
             for (int i = 0; i < rows; i++) {
                 temp[i] = data.get(i).get(j);
+                matrix[i][j] = data.get(i).get(j);
                 stats.addValue(data.get(i).get(j));
             }
 
@@ -68,6 +73,7 @@ public class ProcessClass {
             double marginOfError = tValue * (stDeav[j] / Math.sqrt(elNumber[j]));
             confInterval[j][0] = aMean[j] - marginOfError;
             confInterval[j][1] = aMean[j] + marginOfError;
+            
         }
 
     }
