@@ -80,6 +80,7 @@ public class ImportClass {
                     writtenFile.add(tempData);
                 }
             }
+            workbook.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException ex) {

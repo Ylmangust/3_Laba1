@@ -6,10 +6,10 @@ package mephi.b22901.lab1.Model;
 
 import java.io.*;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javax.swing.JOptionPane;
 import mephi.b22901.lab1.Controller.Controller;
+import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -25,17 +25,17 @@ public class ExportClass {
         this.controller = controller;
     }
 
-    public void exportData(String path, HashMap<String, double[]> data, double[][] interval) {
+    public void exportData(String path, HashMap<String, double[]> data, double[][] interval, RealMatrix matrix) {
 
         if (!path.endsWith(".xlsx")) {
             path = path + ".xlsx";
         }
 
         Workbook workbook = new XSSFWorkbook();
-        Sheet sheet1 = workbook.createSheet("List1");
-        
+        Sheet sheet1 = workbook.createSheet("Статистические показатели");
+
         CellStyle style = workbook.createCellStyle();
-        style.setAlignment(HorizontalAlignment.CENTER); // Выравнивание по горизонтали
+        style.setAlignment(HorizontalAlignment.CENTER); 
         style.setVerticalAlignment(VerticalAlignment.CENTER);
 
         int columns = data.values().iterator().next().length;
@@ -73,27 +73,37 @@ public class ExportClass {
         for (int i = 0; i <= columns; i++) {
             sheet1.autoSizeColumn(i);
         }
-        /* Sheet sheet2 = workbook.createSheet("List2");
-        Row header2 = sheet2.createRow(0);
-        header2.createCell(1).setCellValue("Доверит. интервал");
+
+        Sheet sheet2 = workbook.createSheet("Ковариационная матрица");
+        Row values = sheet2.createRow(0);
+        for (int j = 0; j < columns; j++) {
+            Cell cell = values.createCell(j + 1);
+            cell.setCellValue("Выборка " + (j + 1));
+            cell.setCellStyle(style);
+        }
+
         for (int i = 0; i < columns; i++) {
+            double[] temp = matrix.getRow(i);
             Row row = sheet2.createRow(i + 1);
-            for (int j = 0; j < 3; j++) {
+            for (int j = 0; j <= columns; j++) {
                 if (j == 0) {
                     row.createCell(j).setCellValue("Выборка " + (i + 1));
                 } else {
-                    row.createCell(j).setCellValue(interval[i][j - 1]);
+                    Cell cell = row.createCell(j);
+                    cell.setCellValue(temp[j - 1]);
+                    cell.setCellStyle(style);
                 }
-                    sheet2.autoSizeColumn(j);
+                sheet2.autoSizeColumn(j);
             }
-
-        }*/
+        }
 
         try {
             FileOutputStream out = new FileOutputStream(new File(path));
             workbook.write(out);
             JOptionPane.showMessageDialog(null, "File has been written successfully\nPath: " + path, "OK", JOptionPane.INFORMATION_MESSAGE);
             workbook.close();
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }

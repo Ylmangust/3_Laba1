@@ -9,8 +9,8 @@ import java.util.List;
 import org.apache.commons.math3.distribution.TDistribution;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.stat.correlation.Covariance;
 import org.apache.commons.math3.stat.descriptive.*;
-import org.apache.commons.math3.stat.correlation.*;
 import org.apache.commons.math3.stat.descriptive.moment.GeometricMean;
 
 /**
@@ -29,6 +29,7 @@ public class ProcessClass {
     private double[] max;
     private double[] min;
     private double[] varCoef;
+    private RealMatrix covMatrix;
 
     public ProcessClass(List<List<Double>> data) {
         int columns = data.get(0).size();
@@ -43,17 +44,17 @@ public class ProcessClass {
         max = new double[columns];
         min = new double[columns];
         varCoef = new double[columns];
-        
-        double[][] matrix = new double[rows][columns];
-        
+
+        RealMatrix matForCov = MatrixUtils.createRealMatrix(rows, columns);
+
         for (int j = 0; j < columns; j++) {
             DescriptiveStatistics stats = new DescriptiveStatistics();
             double[] temp = new double[rows];
             for (int i = 0; i < rows; i++) {
                 temp[i] = data.get(i).get(j);
-                matrix[i][j] = data.get(i).get(j);
                 stats.addValue(data.get(i).get(j));
             }
+            matForCov.setColumn(j, temp);
 
             gMean[j] = new GeometricMean().evaluate(temp);
             aMean[j] = stats.getMean();
@@ -67,14 +68,15 @@ public class ProcessClass {
 
             double confLvl = 0.95;
             double alpha = 1 - confLvl;
-            TDistribution tDistribution = new TDistribution(elNumber[j] - 1);
-            double tValue = tDistribution.inverseCumulativeProbability(1 - alpha / 2);
+            TDistribution tDist = new TDistribution(elNumber[j] - 1);
+            double tValue = tDist.inverseCumulativeProbability(1 - alpha / 2);
 
             double marginOfError = tValue * (stDeav[j] / Math.sqrt(elNumber[j]));
             confInterval[j][0] = aMean[j] - marginOfError;
             confInterval[j][1] = aMean[j] + marginOfError;
-            
         }
+        Covariance cov = new Covariance(matForCov);
+        covMatrix = cov.getCovarianceMatrix();
 
     }
 
@@ -91,9 +93,13 @@ public class ProcessClass {
         data.put("Коэф.вар.", varCoef);
         return data;
     }
-    
-    public double[][] returnConfInterval(){
+
+    public double[][] returnConfInterval() {
         return confInterval;
+    }
+
+    public RealMatrix returnCovariance() {
+        return covMatrix;
     }
 
 }

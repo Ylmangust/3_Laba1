@@ -42,7 +42,7 @@ public class Controller {
     public void export(String path) {
         exportInfo = new ExportClass(this);
         if (!process.returnData().isEmpty()) {
-            exportInfo.exportData(path, process.returnData(), process.returnConfInterval());
+            exportInfo.exportData(path, process.returnData(), process.returnConfInterval(), process.returnCovariance());
         }
     }
 
