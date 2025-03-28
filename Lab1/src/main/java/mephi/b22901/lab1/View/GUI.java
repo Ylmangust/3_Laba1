@@ -105,5 +105,9 @@ public class GUI {
         }
         return path;
     }
+    
+    public void exportMistake(){
+        JOptionPane.showMessageDialog(null, "No data to export!", null, JOptionPane.ERROR_MESSAGE);
+    }
 
 }

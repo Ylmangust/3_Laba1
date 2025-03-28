@@ -26,14 +26,22 @@ public class ImportClass {
         this.controller = controller;
     }
 
-    public void ChecknRead(String path) {
+    public boolean ChecknRead(String path) {
+        boolean flag;
         if (isExcel(path)) {
             data = readFile(path);
-            int num = 1;
-            JOptionPane.showMessageDialog(null, "File has been read successfully", "OK", JOptionPane.INFORMATION_MESSAGE);
+            if (data.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "File is empty or data type is wrong!", null, JOptionPane.ERROR_MESSAGE);
+                flag = false;
+            } else {
+                JOptionPane.showMessageDialog(null, "File has been read successfully", null, JOptionPane.INFORMATION_MESSAGE);
+                flag = true;
+            }
         } else {
-            JOptionPane.showMessageDialog(null, "File format can be only xlsx!", "OK", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null, "File format can be only xlsx!", null, JOptionPane.WARNING_MESSAGE);
+            flag = false;
         }
+        return flag;
     }
 
     private boolean isExcel(String name) {

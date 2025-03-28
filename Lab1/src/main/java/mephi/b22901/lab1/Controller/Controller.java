@@ -17,8 +17,8 @@ public class Controller {
 
     private ImportClass importedData;
     private ProcessClass process;
-    private ExportClass exportInfo;
     private GUI gui;
+    private boolean successFlag;
 
     public Controller() {
         gui = new GUI(this);
@@ -26,11 +26,11 @@ public class Controller {
 
     public void read(String path) {
         importedData = new ImportClass(this);
-        importedData.ChecknRead(path);
+        successFlag = importedData.ChecknRead(path);
     }
 
     public void process() {
-        if (importedData.getData()!=null) {
+        if (successFlag) {
             process = new ProcessClass(importedData.getData());
         }
     }
@@ -40,9 +40,11 @@ public class Controller {
     }
 
     public void export(String path) {
-        exportInfo = new ExportClass(this);
-        if (!process.returnData().isEmpty()) {
+        ExportClass exportInfo = new ExportClass();
+        if (successFlag) {
             exportInfo.exportData(path, process.returnData(), process.returnConfInterval(), process.returnCovariance());
+        } else {
+            gui.exportMistake();
         }
     }
 

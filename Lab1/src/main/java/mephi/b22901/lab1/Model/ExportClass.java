@@ -8,7 +8,6 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JOptionPane;
-import mephi.b22901.lab1.Controller.Controller;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -18,12 +17,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * @author Регина
  */
 public class ExportClass {
-
-    private Controller controller;
-
-    public ExportClass(Controller controller) {
-        this.controller = controller;
-    }
 
     public void exportData(String path, HashMap<String, double[]> data, double[][] interval, RealMatrix matrix) {
 
@@ -100,7 +93,7 @@ public class ExportClass {
         try {
             FileOutputStream out = new FileOutputStream(new File(path));
             workbook.write(out);
-            JOptionPane.showMessageDialog(null, "File has been written successfully\nPath: " + path, "OK", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "File has been written successfully\nPath: " + path, null, JOptionPane.INFORMATION_MESSAGE);
             workbook.close();
         } catch (FileNotFoundException ex) {
             ex.printStackTrace();
